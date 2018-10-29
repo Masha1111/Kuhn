@@ -1,35 +1,3 @@
-class Graph:
-    def __init__(self):
-        self.parts = []
-        self.edges = {}
-
-
-class Part:
-    def __init__(self):
-        self.elements = []
-
-    def add(self, node):
-        self.elements.append(node)
-
-
-def build_graph(content, letters):
-    global graph
-    graph = Graph()
-    part_family = Part()
-    part_elements = Part()
-    for i in range(len(content)):
-        part_family.add(i)
-        edges = []
-        for j in content[i]:
-            index = letters.index(j)
-            if index not in part_elements.elements:
-                part_elements.add(index)
-            edges.append(index)
-        graph.edges[i] = edges
-    graph.parts.append(part_elements)
-    graph.parts.append(part_family)
-
-
 def get_family(content):
     size = int(content[0])
     arr = []
@@ -58,11 +26,11 @@ def get_number_nodes(arr):
 
 def build_matrix(families, letters):
     matrix = [[0 for j in range(len(families) + len(letters))] for i in range(len(families) + len(letters))]
-    for i in range(len(families)):
-        for j in range(len(families[i])):
-            index = letters.index(families[i][j]) + len(families[i])
-            matrix[index][i] = 1
-            matrix[i][index] = 1
+    for k in range(len(families)):
+        for n in range(len(families[k])):
+            index = letters.index(families[k][n]) + len(families)
+            matrix[index][k] = 1
+            matrix[k][index] = 1
     return matrix
 
 
@@ -76,6 +44,20 @@ def dfs(v):
                 matching[num] = v
                 return True
     return False
+
+
+def print_result(letters, lenght):
+    edges = []
+    with open("out.txt", 'w') as file:
+        for i in range(len(matrix[0])):
+            if matching[i] != -1:
+                edges.append((i, matching[i]))
+        if len(edges) != 2 * lenght:
+            file.write('N')
+        else:
+            file.write('Y\n')
+            for j in range(lenght):
+                file.write(letters[edges[j][1] - lenght] + ' ')
 
 
 def main():
@@ -98,10 +80,7 @@ def main():
         for j in range(len(matrix[0])):
             used[j] = False
         dfs(i)
-    for i in range(len(matrix[0])):
-        if matching[i] != -1:
-            print(i, " ", matching[i])
-    print(matching)
+    print_result(letters, len(family))
 
 
 if __name__ == '__main__':
